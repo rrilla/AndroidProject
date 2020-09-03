@@ -4,29 +4,13 @@ public class Member {
 	private String id;
 	private String pw;
 	private String f_code;
+	private String name;
 	private String nickname;
 	private String phone;
 	private String birthday;
 	private String position;
 	private String join_date;
 	
-	public Member() {
-		super();
-	}
-	
-	public Member(String id, String pw, String f_code, String nickname, String phone, String birthday,
-			String position) {
-		super();
-		this.id = id;
-		this.pw = pw;
-		this.f_code = f_code;
-		this.nickname = nickname;
-		this.phone = phone;
-		this.birthday = birthday;
-		this.position = position;
-	}
-
-
 	public String getId() {
 		return id;
 	}
@@ -44,6 +28,12 @@ public class Member {
 	}
 	public void setF_code(String f_code) {
 		this.f_code = f_code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getNickname() {
 		return nickname;
@@ -75,11 +65,11 @@ public class Member {
 	public void setJoin_date(String join_date) {
 		this.join_date = join_date;
 	}
-
 	@Override
 	public String toString() {
-		return "Member [id=" + id + ", pw=" + pw + ", f_code=" + f_code + ", nickname=" + nickname + ", phone=" + phone
-				+ ", birthday=" + birthday + ", position=" + position + ", join_date=" + join_date + "]";
+		return "Member [id=" + id + ", pw=" + pw + ", f_code=" + f_code + ", name=" + name + ", nickname=" + nickname
+				+ ", phone=" + phone + ", birthday=" + birthday + ", position=" + position + ", join_date=" + join_date
+				+ "]";
 	}
 	
 }
