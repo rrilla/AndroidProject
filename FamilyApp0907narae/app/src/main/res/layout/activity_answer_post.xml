@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/writepenbackground"
+    android:backgroundTint="#99FFFFFF"
+    android:backgroundTintMode="src_over"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="오늘의 질문"
+        android:textAlignment="center"
+        android:textSize="35dp"
+        android:layout_marginTop="50dp"/>
+
+    <TextView
+        android:id="@+id/answerpost_tv_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:text="답변할 질문출력"
+        android:textAlignment="center"
+        android:textSize="30dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/answerpost_et_answer"
+                android:layout_width="266dp"
+                android:layout_height="331dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="45dp"
+                android:background="@drawable/caligraphypaper"
+                android:backgroundTint="#99FFFFFF"
+                android:backgroundTintMode="src_over"
+                android:ems="10"
+                android:hint="여기다 쓰셈"
+                android:inputType="textPersonName" />
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/answerpost_btn_submit"
+        android:layout_width="333dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="작성 완료" />
+
+</LinearLayout>

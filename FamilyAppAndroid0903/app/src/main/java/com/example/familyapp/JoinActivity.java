@@ -4,7 +4,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +25,7 @@ public class JoinActivity extends AppCompatActivity {
     Button btnIdCheck, btnCheckFcode, btnOverlapFcode, btnSubmit;
     TextView tvIdCheck, tvFcodeCheck;
     String sendmsg;
-    String result;
+    String result,fCode;
     CheckBox checkNew, checkAlready;
 
     @Override
@@ -76,8 +79,9 @@ public class JoinActivity extends AppCompatActivity {
         btnOverlapFcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String fCode = edFcode.getText().toString();
+                fCode = edFcode.getText().toString();
                 tvFcodeCheck.setText(fCode);
+                AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
                 if (fCode.equals("")) {
                     tvFcodeCheck.setText("가족코드를 입력 해주세요.");
                 } else {
@@ -93,6 +97,33 @@ public class JoinActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                if(result.equals("사용 가능")) {
+                    builder.setTitle("가족코드 인증 결과");
+                    builder.setMessage("사용가능한 가족 코드입니다. 이 코드로 가족을 등록 하시겠습니까?");
+                    builder.setNegativeButton("아니오", null);
+                    builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            sendmsg = null;
+                            result = null;
+                            try {
+                                sendmsg = "join_AddFcode.do";
+                                result = new Task(sendmsg).execute(fCode,edName.getText().toString()).get();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if(result.equals("가족 등록 완료.")){
+                                tvFcodeCheck.setText("가족 등록 완료.");
+                                edFcode.setInputType(InputType.TYPE_NULL);
+                            }else{
+                                tvFcodeCheck.setText("가족 등록 서버 에러.");
+                            }
+                        }
+                    });
+                    builder.create().show();
+                }
             }
         });
 
@@ -100,8 +131,7 @@ public class JoinActivity extends AppCompatActivity {
         btnCheckFcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String fCode = edFcode.getText().toString();
-                tvFcodeCheck.setText(fCode);
+                fCode = edFcode.getText().toString();
                 if (fCode.equals("")) {
                     tvFcodeCheck.setText("가족코드를 입력 해주세요.");
                 } else {
@@ -110,12 +140,13 @@ public class JoinActivity extends AppCompatActivity {
                     try {
                         sendmsg = "join_CheckFcode.do";
                         result = new Task(sendmsg).execute(fCode).get();
-                        tvFcodeCheck.setText(result);
+
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    tvFcodeCheck.setText(result);
                 }
             }
         });
@@ -148,31 +179,60 @@ public class JoinActivity extends AppCompatActivity {
                 String fCode = edFcode.getText().toString();
                 AlertDialog.Builder builder = new AlertDialog.Builder(JoinActivity.this);
 
-                if(!pw.equals(pw2)){
+                if(pw.equals("") || pw2.equals("")){
+                    builder.setTitle("회원가입 실패");
+                    builder.setMessage("비밀번호를 입력 해주세요.");
+                    builder.setNeutralButton("확인",null);
+                    builder.create().show();
+                }else if(!pw.equals(pw2)){
                     builder.setTitle("회원가입 실패");
                     builder.setMessage("비밀번호가 다릅니다.");
                     builder.setNeutralButton("확인",null);
                     builder.create().show();
-                }
+                }else {
 
-                sendmsg = null;
-                result = null;
-                try {
-                    sendmsg = "join.do";
-                    result = new Task(sendmsg).execute(id,pw,pw2,name,phoneNum,bDay,nickname,role,fCode).get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    sendmsg = null;
+                    result = null;
+                    try {
+                        sendmsg = "join.do";
+                        result = new Task(sendmsg).execute(id, pw, pw2, name, phoneNum, bDay, nickname, role, fCode).get();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (result.equals("가입 성공")) {
+                        Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
+                        //성공시 갈 페이지
+                        Intent intent = new Intent(getApplicationContext(), JoinSuccessActivity.class);
+                        intent.putExtra("fCode", fCode);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
+                    }
                 }
-                if(result.equals("가입 성공")){
-                    Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
-                    //성공시 갈 페이지 코딩
-                }else{
-                    Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
-                }
-
             }
         });
+    }
+
+    //가족코드 인증성공시 실행할 메서드
+    private DialogInterface.OnClickListener addFcode(String fCode) {
+        sendmsg = null;
+        result = null;
+        try {
+            sendmsg = "join_AddFcode.do";
+            result = new Task(sendmsg).execute(fCode).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(result.equals("가족 등록 완료.")){
+            tvFcodeCheck.setText("가족 등록 완료.");
+            edFcode.setClickable(false);
+        }else{
+            tvFcodeCheck.setText("가족 등록 서버 에러.");
+        }
+        return null;
     }
 }

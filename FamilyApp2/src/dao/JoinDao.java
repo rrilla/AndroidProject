@@ -63,26 +63,48 @@ public class JoinDao {
 		return flag;
 	}
 	
-	public boolean CheckFcode(String fCode) {
-		boolean flag = false;
+	public String CheckFcode(String fCode) {
+		String cName = null;
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select * from family where f_code=?";
+		String sql = "select c_name from family where f_code=?";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, fCode);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				flag = true;
-			} else {
-				flag = false;
+				cName = rs.getString("c_name");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			DBconn.close(conn, ps, rs);
+		}
+		return cName;
+	}
+	
+	public boolean addFcode(String fCode,String cName) {
+		boolean flag = false;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		String sql = "insert into family(f_code, c_name) "
+				+ "values(?,?)";
+		try {
+			conn = DBconn.getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, fCode);
+			ps.setString(2, cName);
+			int n = ps.executeUpdate();
+			if (n == 1) {
+				flag = true;
+				System.out.println("fcode생성완료");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			DBconn.close(conn, ps);
 		}
 		return flag;
 	}
@@ -91,7 +113,6 @@ public class JoinDao {
 		boolean flag = false;
 		Connection conn = null;
 		PreparedStatement ps = null;
-		ResultSet rs = null;
 		String sql = "insert into member(id, f_code, nickname, pw, name, phone, birthday, position) "
 				+ "values(?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
@@ -113,7 +134,7 @@ public class JoinDao {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			DBconn.close(conn, ps, rs);
+			DBconn.close(conn, ps);
 		}
 		return flag;
 	}

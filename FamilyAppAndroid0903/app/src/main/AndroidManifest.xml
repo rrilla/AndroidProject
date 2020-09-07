@@ -13,7 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".AnswerPost" />
+        <activity android:name=".JoinSuccessActivity"></activity>
+        <activity android:name=".AnswerCameraActivity" />
+        <activity android:name=".AnswerAudioActivity" />
+        <activity android:name=".AnswerYesterdayActivity" />
+        <activity android:name=".ChoiceAnswerActivity" />
+        <activity android:name=".AnswerPostActivity" />
         <activity android:name=".QuestionActivity" />
         <activity android:name=".JoinActivity" />
         <activity android:name=".LoginActivity" />

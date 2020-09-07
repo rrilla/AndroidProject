@@ -1,17 +1,37 @@
 package servlet;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dao.AnswerDao;
+import dao.FmodifyDao;
 import dao.JoinDao;
+import dao.MainLoginDao;
 import dao.MemberDao;
+import dao.QuestionDao;
+import dao.UpdateEvery8;
 import vo.Member;
+import vo.Post;
 
 @WebServlet("*.do")
 public class Servlet extends HttpServlet {
@@ -20,6 +40,10 @@ public class Servlet extends HttpServlet {
 	public Servlet() {
         super();
     }
+	
+	public void init(ServletConfig config) throws ServletException {
+		//every8run();	//ë§¤ì¼ 8ì‹œ ì‹¤í–‰ë˜ëŠ” ìŠ¤ì¼€ì¤„ëŸ¬ ì‹¤í–‰
+	}
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
@@ -32,71 +56,137 @@ public class Servlet extends HttpServlet {
 			if(action.equals("join.do")) {
 				 String id = request.getParameter("id");
 				 String pw = request.getParameter("pw");
-				 String pwConfirm = request.getParameter("pwConfirm");
 				 String name = request.getParameter("name");
 				 String phone = request.getParameter("phoneNum");
 				 String bDay = request.getParameter("bDay");
 				 String nickname = request.getParameter("nickname");
 				 String role = request.getParameter("role");
 				 String f_Code = request.getParameter("fCode");
-				 System.out.println(id+pw+pwConfirm+name+phone+bDay);
-				 Member member = new Member(id, pw, f_Code, name, nickname, phone, bDay, role);
-				 boolean flag = JoinDao.getInstance().insert(member);
-				 if(flag) {
-					 out.print("°¡ÀÔ ¼º°ø");
-				 }else {
-					 out.print("°¡ÀÔ ½ÇÆÐ");
+				 String fAlready = request.getParameter("fAlready");
+				 boolean flag = true;
+				 //ê¸°ì¡´ê°€ì¡±ë“±ë¡ ë¯¸ì²´í¬ì‹œ ê°€ì¡±ì½”ë“œ ìƒì„±
+				 if(fAlready.equals("0")) {
+					 flag = JoinDao.getInstance().addFcode(f_Code, name);
 				 }
+				 System.out.println("fcodeë˜ê³ ë˜ë‚˜");
+				 if(flag) {
+					 //íšŒì›ê°€ìž…
+					 Member member = new Member(id, pw, f_Code, name, nickname, phone, bDay, role);
+					 flag = JoinDao.getInstance().insert(member);
+					 if(flag) {
+						 out.print("1");
+					 }else {
+						 out.print("íšŒì›ê°€ìž… ì‹¤íŒ¨.");
+					 }
+				}else {
+						out.print("ê°€ì¡± ë“±ë¡ ì‹¤íŒ¨.");
+					}
 				 
 			}else if(action.equals("join_CheckId.do")) {
 				String id = request.getParameter("id");
 				boolean flag = JoinDao.getInstance().overappedId(id);
 				if(flag) {
-					out.print("»ç¿ë ºÒ°¡´É");
+					out.print("ì‚¬ìš© ë¶ˆê°€ëŠ¥");
 				}else {
-					out.print("»ç¿ë °¡´É");
+					out.print("ì‚¬ìš© ê°€ëŠ¥");
 				}
 						
 			}else if(action.equals("join_OverlapFcode.do")) {
 				String fCode = request.getParameter("fCode");
 				boolean flag = JoinDao.getInstance().overappedFcode(fCode);
 				if(flag) {
-					out.print("»ç¿ë ºÒ°¡´É");	
+					out.print("ì‚¬ìš© ë¶ˆê°€ëŠ¥");	
 				}else {
-					out.print("»ç¿ë °¡´É");
+					out.print("ì‚¬ìš© ê°€ëŠ¥");
 				}
 				
 			}else if(action.equals("join_CheckFcode.do")) {
 				String fCode = request.getParameter("fCode");
-				boolean flag = JoinDao.getInstance().CheckFcode(fCode);
-				if(flag) {
-					out.print("°¡Á·ÄÚµåÀÖÀ½(°¡Á·ÀÌ¸§?)");	
+				String cName = null;
+				cName = JoinDao.getInstance().CheckFcode(fCode);
+				if(cName!=null) {
+					out.print(cName);	
 				}else {
-					out.print("Á¸ÀçÇÏÁö ¾Ê´Â °¡Á·ÄÚµå ÀÔ´Ï´Ù.");
+					out.print("0");
 				}
 				
-			}else if(action.equals("question.do")) {
 				
 			}else if(action.equals("login.do")) {
 				String id = request.getParameter("id");
 				String pw = request.getParameter("pw");
 				int n = MemberDao.getInstance().login(id, pw);
 				out.print(n);
-				//1¼º°ø, 0ºñ¹ø¿¡·¯, -1 ¾ÆÀÌµð ¿¡·¯
-			}else if(action.equals("question.do")) {
+				//1ì„±ê³µ, 0ë¹„ë²ˆì—ëŸ¬, -1 ì•„ì´ë”” ì—ëŸ¬
 				
-			}else if(action.equals("answer.do")) {
+			}else if(action.equals("question_load.do")) {
+				String userId = request.getParameter("userId");
+				String questionJson = null;
+				questionJson = QuestionDao.getInstance().questionJson(userId);
+				if(questionJson==null) {
+					out.print("ì„œë²„ ì—ëŸ¬");
+				}else {
+					out.print(questionJson);
+				}
 				
-			}else if(action.equals("post.do")) {
+			}else if(action.equals("answer_post.do")) {
+				String id = request.getParameter("id");
+				String fCode = request.getParameter("fCode");
+				int familyQno = Integer.parseInt(request.getParameter("familyQno"));
+				String question = request.getParameter("question");
+				String answer = request.getParameter("answer");
+				Post post = new Post(id,fCode,familyQno,question,answer);
+				boolean flag = AnswerDao.getInstance().insertPost(post);
+				if(flag) {
+					out.print("1");
+				}else {
+					out.print("2");
+				}
 				
-			}else if(action.equals("photo.do")) {
+			}else if(action.equals("fModify.do")) {
+				String id = request.getParameter("id");
+				String fName = request.getParameter("fName");
+				String motoo = request.getParameter("motoo");
+				String location = request.getParameter("location");
+				boolean flag = FmodifyDao.getInstance().modify(id, fName, location, motoo);
+				if(flag) {
+					out.print("1");
+				}else {
+					out.print("0");
+				}
 				
+			}else if(action.equals("mainLogin_load.do")) {
+				String id = request.getParameter("id");
+				String mainJoinJson = null;
+				mainJoinJson = MainLoginDao.getInstance().mainJoinJson(id);
+				if(mainJoinJson==null) {
+					out.print("ì„œë²„ ì—ëŸ¬");
+				}else {
+					out.print(mainJoinJson);
+				}
+				System.out.println(mainJoinJson + "ì˜¤ê¸´ì˜´");
 			}else if(action.equals("audio.do")) {
 				
 			}else if(action.equals("storage.do")) {
 				
+				
+				
+				
+			}else if(action.equals("imgTest.do")) {
+				String imgStr = request.getParameter("imgStr");
+				String img = new String(Base64.getDecoder().decode(imgStr.getBytes()));
+				byte[] imgByte = imgStr.getBytes();
+				System.out.println(img);
+				out.print("ì™“ë”°");
+				
+				//writeToFile("zzzz", imgByte);
+//				ByteArrayInputStream input_stream = new ByteArrayInputStream(imgByte);
+//
+//				BufferedImage final_buffered_image = ImageIO.read(input_stream);
+//
+//				ImageIO.write(final_buffered_image , "png", new File("./temp.png") );
+
+				
 			}
-			
 			
 	}
 
@@ -104,5 +194,47 @@ public class Servlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		doGet(request, response);
 	}
+	
+	//ë§¤ì¼ 8ì‹œ ì‹¤í–‰í•  ìž‘ì—…
+	private void every8run() {
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				String msg = UpdateEvery8.getInstance().updateFamilyQno();
+				System.out.println(msg);
+			}
+		};
+		
+		Timer timer = new Timer();
+		long firstTime = calcTaskTime(8);	//ì‹œìž‘ì‹œê°„ìž…ë ¥(ex 17)
+		long Period = (60*60*24)*100;	//ì‹¤í–‰ì£¼ê¸°
+		timer.scheduleAtFixedRate(task, firstTime, Period);
+	}
+	
+	//ì‹œìž‘ì‹œê°„ê¹Œì§€ ëŒ€ê¸°í•´ì•¼í•  ì‹œê°„
+	private long calcTaskTime(int startTime) {
+	    if(startTime > 23 || startTime < 0){
+	        return 0;
+	    }
+	    Calendar calendar = new GregorianCalendar(Locale.KOREA);
+	    calendar.set(Calendar.HOUR_OF_DAY, startTime);
+	    calendar.set(Calendar.MINUTE, 0);
+	    calendar.set(Calendar.SECOND, 0);
 
+	    long nowDate = new Date().getTime();
+
+	    if (nowDate > calendar.getTime().getTime()) {
+	        calendar.add(Calendar.DAY_OF_YEAR, 1);
+	    }
+	    long waiting = (calendar.getTime().getTime() - nowDate)/1000;
+	    System.out.println(("family`s q_no Schedule Start Time : " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime())));
+	    System.out.println(("Waiting : " + waiting+" sec"));
+
+	    return (int)waiting;
+	}
+	
+	
+	
+	
+	
 }

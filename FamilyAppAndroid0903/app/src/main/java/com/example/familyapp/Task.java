@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 public class Task extends AsyncTask<String, String, String> {
-    public static String ip ="172.30.1.54"; //자신의 IP번호 - 집
+    public static String ip ="172.30.1.42"; //자신의 IP번호 - 집
     //public static String ip ="192.168.0.27"; //자신의 IP번호 - 학원
 
     String sendMsg, receiveMsg;
@@ -40,15 +40,21 @@ public class Task extends AsyncTask<String, String, String> {
             }else if(sendMsg.equals("join_CheckFcode.do")){
                 serverUrl += sendMsg;
                 sendMsg = "fCode="+strings[0];
-            }else if(sendMsg.equals("question.do")){
+            }else if(sendMsg.equals("join_AddFcode.do")){
                 serverUrl += sendMsg;
-                sendMsg = "&type="+strings[0];
+                sendMsg = "fCode="+strings[0] + "&cName=" + strings[1];
             }else if(sendMsg.equals("login.do")){
                 serverUrl += sendMsg;
                 sendMsg = "id="+strings[0] + "&pw=" + strings[1];
-            }else if(sendMsg.equals("question.do")){
+            }else if(sendMsg.equals("question_load.do")){
                 serverUrl += sendMsg;
-                sendMsg = "&type="+strings[0];
+                sendMsg = "userId="+strings[0];
+            }else if(sendMsg.equals("answer_post.do")){
+                serverUrl += sendMsg;
+                sendMsg = "id=" + strings[0] + "&fCode=" + strings[1] + "&familyQno=" + strings[2] +
+                        "&question=" + strings[3] + "&answer=" + strings[4];
+
+
             }else if(sendMsg.equals("answer.do")){
                 serverUrl += sendMsg;
                 sendMsg = "&type="+strings[0];

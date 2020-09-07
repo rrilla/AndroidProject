@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundflower"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="80dp"
+            android:text="슬기로운 부모생활"
+            android:textColor="#272323"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="218dp"
+            android:layout_height="214dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20sp"
+
+            android:fontFamily="sans-serif-light"
+            android:text="우리 엄마 아빠는       \n어떤 삶을 살았을까  \n   \n낯간지러워서,\n무뚝뚝한 아들딸이라서,  \n \n혹은 너무 익숙해서      \n차마 묻지 못했던 질문들."
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/main_btn_signup"
+            android:layout_width="121dp"
+            android:layout_height="44dp"
+            android:layout_marginLeft="250sp"
+            android:layout_marginTop="100sp"
+            android:text="회원가입" />
+
+        <Button
+            android:id="@+id/main_btn_signin"
+            android:layout_width="123dp"
+            android:layout_height="43dp"
+            android:layout_marginLeft="250sp"
+            android:layout_marginTop="20sp"
+            android:text="로그인" />
+    </LinearLayout>
+
+</LinearLayout>

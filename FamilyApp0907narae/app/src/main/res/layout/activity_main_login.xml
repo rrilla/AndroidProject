@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/home"
+    android:backgroundTintMode="src_over"
+    android:backgroundTint="#99FFFFFF"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/mainlogin_tv_fname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="''의 가족"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp">
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="193dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/acja" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="300dp"
+            android:layout_height="135dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/family" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="가 훈"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/mainlogin_tv_motoo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="백만장자는 사건이 아니라 과정에 의해 만들어진다.\n\n(가족 정보를 등록 해주세요.)"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="104dp"
+            android:layout_height="57dp"
+            android:layout_weight="1"
+            android:text="Logout" />
+
+        <Button
+            android:id="@+id/mainlogin_btn_goQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:layout_weight="2.5"
+            android:text="오늘의 질문" />
+        <Button
+            android:id="@+id/mainlogin_btn_goStorage"
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:layout_weight="2.5"
+            android:text="가족 답변 보관함" />
+        <Button
+            android:id="@+id/mainlogin_btn_goFmodify"
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:layout_weight="2.5"
+            android:text="가족 정보 변경" />
+    </LinearLayout>
+
+
+</LinearLayout>
